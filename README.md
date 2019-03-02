@@ -2,9 +2,10 @@
 Visual explorer of Red structures
 
 Usage: `explore <struct>`
+
 E.g.:
-`explore system`
-`explore help-ctx`
+`explore system`,
+`explore help-ctx`,
 `explore preprocessor`
 
 Clicking on object, map, block and funcs will enter into these structs.
