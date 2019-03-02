@@ -12,6 +12,8 @@ E.g.:
 
 Clicking on object, map, block and funcs will enter into these structs.
 
+Ctrl-clicking on labels which are behind each other will bring the last one into foreground.
+
 Clicking on central node will lead up one level.
 
 Contextual menu for back and forward history moving.
