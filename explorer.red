@@ -1,6 +1,6 @@
 Red [
 	Author: "Toomas Vooglaid"
-	Date: 
+	Date: 16-Feb-2019
 	File: %explorer.red
 ]
 #include %../utils/info.red
