@@ -4,6 +4,7 @@ Red [
 	File: %explorer.red
 ]
 #include %../utils/info.red
+;use https://raw.githubusercontent.com/toomasv/syntax-highlighter/master/info.red
 plan-ctx: context [
 	obj: none
 	tx: make face! [type: 'text]
