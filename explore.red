@@ -4,8 +4,10 @@ Red [
 	File: %explorer.red
 	Needs: 'View
 ]
+;#include %../utils/info.red ;(use https://raw.githubusercontent.com/toomasv/syntax-highlighter/master/info.red)
+#include %../../red-latest/red-master/environment/console/help.red
 plan-ctx: context [
-	obj: none
+	obj: arg: none
 	tx: make face! [type: 'text]
 	words: copy []
 	selected: copy []
@@ -65,7 +67,6 @@ plan-ctx: context [
 			box1/text: to-string opt
 			box1/color: get clr
 			box1/offset/y: ofy 
-			;print-props box1
 			ofy: ofy + box/size/y
 			append legend/pane  box1
 		]
@@ -87,16 +88,6 @@ plan-ctx: context [
 	]
 	colors: sort extract load help-string tuple! 2
 
-	print-props: func [wh][
-		print ["Properties of" form type? wh ":"]
-		foreach prop exclude switch type?/word wh [
-			event! [system/catalog/accessors/event!]
-			object! [words-of wh]
-		][window face parent on-change* on-deep-change*][
-			print [prop ":" mold wh/:prop]
-		]
-	]
-
 	edit-options: func [which idx /local opt i where what found new box][
 		clear at opt-lay 2
 		either which [
@@ -115,7 +106,6 @@ plan-ctx: context [
 			box/offset/y: idx/1/offset/y + idx/1/size/y
 			box/parent: none
 			box/state: none
-			;print-props box
 			insert idx: next idx box
 			legend/size/y: legend/size/y + box/size/y
 			theme-save/offset/y: legend/offset/y + legend/size/y + 10
@@ -456,7 +446,6 @@ plan-ctx: context [
 				]
 			]
 			step: 2 * pi / length? selected
-			;probe selected
 			forall selected [
 				set [word type type2] selected/1
 				color: get-color type type2
@@ -478,6 +467,30 @@ plan-ctx: context [
 			'text 0 - sz tx/text
 		]
 	]
+	comment {
+	make-obj: func [block [block!]][; TBD!
+		parse block [
+			'view s: [
+				opt ['reduce | 'compose] block!
+			|	[	path! if (first s/1 = 'layout) 
+				|	'layout
+				]
+			]
+		]
+	]
+	func-words: func [fn][ ;TBD!
+		parse body-of :fn [
+			collect any [s:
+				if (any-function? get :s/1)(
+					
+				)
+			|	if (path? :s/1)
+				keep (s/1)
+				skip
+			]
+		]
+	]
+	}
 	make-plan: func [
 		'struct [word! path! block!];[object! file! block! word! path! map!] 
 		/with 
@@ -487,7 +500,6 @@ plan-ctx: context [
 	][
 		system/view/auto-sync?: off
 		with-types: either with [types][[any-type!]]
-		
 		unless keep-path [clear path]
 		case [
 			all [
@@ -524,5 +536,13 @@ plan-ctx: context [
 	set 'explore func ['struct [word! path! block!]][
 		make-plan :struct
 		view win
+	]
+	either empty? args: system/options/args [
+		unless system/state/interpreted? [
+			explore system
+		]
+	][
+		arg: to-path args/1 
+		explore :arg
 	]
 ]
