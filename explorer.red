@@ -2,10 +2,8 @@ Red [
 	Author: "Toomas Vooglaid"
 	Date: 16-Feb-2019
 	File: %explorer.red
-	Needs: View
+	Needs: 'View
 ]
-#include %../utils/info.red
-;use https://raw.githubusercontent.com/toomasv/syntax-highlighter/master/info.red
 plan-ctx: context [
 	obj: none
 	tx: make face! [type: 'text]
@@ -18,6 +16,7 @@ plan-ctx: context [
 	with-types: none
 	pos: d1: d2: d3: none
 	history: clear []
+	win: legend: boxes: themes: none
 	;box-size: 120x25
 	
 	options: [
@@ -348,6 +347,10 @@ plan-ctx: context [
 		below
 		legend: (legend-VID)
 		theme-save: (theme-save-VID)
+		at 10x10 panel [
+			text 40 "Input:" 
+			field 150 on-enter [path: to-path face/data make-plan/keep-path []]
+		]
 	][
 		offset: 20x20
 		menu: [
@@ -442,8 +445,9 @@ plan-ctx: context [
 							pick get path index? words
 						]
 						any-function? get path [get words/1]
+						any [map? get path any-object? get path][select get path words/1]
 						true [
-							select get path words/1
+							attempt/safer [words/1]
 						]
 					]
 				]
@@ -474,30 +478,6 @@ plan-ctx: context [
 			'text 0 - sz tx/text
 		]
 	]
-	comment {
-	make-obj: func [block [block!]][; TBD!
-		parse block [
-			'view s: [
-				opt ['reduce | 'compose] block!
-			|	[	path! if (first s/1 = 'layout) 
-				|	'layout
-				]
-			]
-		]
-	]
-	func-words: func [fn][ ;TBD!
-		parse body-of :fn [
-			collect any [s:
-				if (any-function? get :s/1)(
-					
-				)
-			|	if (path? :s/1)
-				keep (s/1)
-				skip
-			]
-		]
-	]
-	}
 	make-plan: func [
 		'struct [word! path! block!];[object! file! block! word! path! map!] 
 		/with 
@@ -507,11 +487,6 @@ plan-ctx: context [
 	][
 		system/view/auto-sync?: off
 		with-types: either with [types][[any-type!]]
-		;if file? :struct [struct: load struct]
-		;case [
-		;	block? :struct [struct: make-obj struct]
-			;map? :struct [struct: object body-of struct]
-		;]
 		
 		unless keep-path [clear path]
 		case [
@@ -521,7 +496,6 @@ plan-ctx: context [
 			][
 				path: reduce [struct to-get-path path]
 			]
-			;block? :path 
 			:struct [append path :struct]
 		]
 		unless any [
@@ -535,13 +509,14 @@ plan-ctx: context [
 		either block? :path [
 			insert clear words do path
 		][
-			insert clear words switch type?/word get :path [
+			insert clear words switch/default type?/word get :path [
 				object! [words-of obj: get :path]
 				map! [keys-of obj: get :path]
 				function! [[spec-of body-of]];func-words obj: get :path]
 				native! action! op! [[spec-of]]
 				block! hash! paren! vector! [get :path]
-			]
+				string! [parse get :path [collect any [keep to lf some lf | keep to end]]];[split get :path newline]
+			][get :path]
 		]
 		make-boxes
 		show win
