@@ -1,7 +1,7 @@
 Red [
 	Author: "Toomas Vooglaid"
 	Date: 16-Feb-2019
-	File: %explorer.red
+	File: %explore.red
 	Needs: 'View
 ]
 ;#include %../utils/info.red ;(use https://raw.githubusercontent.com/toomasv/syntax-highlighter/master/info.red)
