@@ -13,4 +13,4 @@ Contextual menu for back and forward history moving.
 Wheeling changes diameter.
 Adjustable legend:
   - saving, changing and removing from text-box selection
-  - changing, removing, adding individual elements from contextual menu
+  - changing, (re)moving, adding individual elements from contextual menu
