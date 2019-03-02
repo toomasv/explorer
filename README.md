@@ -1,6 +1,8 @@
 # explorer
 Visual explorer of Red structures
 
+(uses https://raw.githubusercontent.com/toomasv/syntax-highlighter/master/info.red)
+
 Usage: `explore <struct>`
 
 E.g.:
